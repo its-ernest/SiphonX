@@ -2,8 +2,8 @@
 # SiphonX (Inspired by [LurkerX](https://github.com/the-hollowclan/LurkerX))
 <p align="center">
   <img height="120" src="SiphonX-screenshot.png">
-  <img height="120" width="120" src="siphonX.png">
-  <img height="120" width="120" src="siphonX2.png">
+  <img height="120" width="120" src="siphonx.png">
+  <img height="120" width="120" src="siphonx2.png">
 </p>
 <p align="center">
   <img src="https://img.shields.io/badge/version-1.4.0-green?style=for-the-badge">
