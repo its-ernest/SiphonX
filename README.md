@@ -6,7 +6,7 @@
   <img height="120" width="120" src="siphonx2.png">
 </p>
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.4.0-green?style=for-the-badge">
+  <img src="https://img.shields.io/badge/version-1.0-green?style=for-the-badge">
   <img src="https://img.shields.io/github/license/its-ernest/SiphonX?style=for-the-badge&color=darkgreen">
   <img src="https://img.shields.io/github/stars/its-ernest/SiphonX?style=for-the-badge&color=teal">
   <img src="https://img.shields.io/github/forks/its-ernest/SiphonX?style=for-the-badge&color=cyan">
@@ -16,7 +16,7 @@
   <img src="https://img.shields.io/badge/Author-its-ernest-blue?style=flat-square">
   <img src="https://img.shields.io/badge/Open%20Source-Yes-darkgreen?style=flat-square">
   <img src="https://img.shields.io/badge/Maintained%3F-Yes-lightblue?style=flat-square">
-  <img src="https://img.shields.io/badge/Written%20In-Java,%20Javascript,%20Go,%20iOS-darkcyan?style=flat-square">
+  <img src="https://img.shields.io/badge/Written%20In-Go,%20iOS-darkcyan?style=flat-square">
 </p>
 
 
